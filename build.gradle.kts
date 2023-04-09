@@ -16,7 +16,7 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-html:0.8.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
-
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     testImplementation(kotlin("test"))
 }
 

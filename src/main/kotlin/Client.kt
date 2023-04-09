@@ -3,17 +3,14 @@ import kotlinx.html.dom.append
 import org.w3c.dom.Node
 import kotlinx.browser.document
 import kotlinx.browser.window
+import tiled.parseMap
 
-val jsonMapper = kotlinx.serialization.json.Json { ignoreUnknownKeys = true }
-
-fun main() {
-    window.onload = { document.body?.sayHello() }
-}
-
-fun Node.sayHello() {
-    append {
+suspend fun main() {
+    val container = document.getElementById("root") ?: error("Couldn't find container!")
+    container.append {
         div {
             +"Hello from JS"
         }
     }
+    val map = parseMap("./assets/map.json")
 }
