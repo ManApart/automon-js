@@ -2,12 +2,23 @@ package tiled
 
 import kotlinx.coroutines.delay
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.modules.subclass
 import org.w3c.xhr.JSON
 import org.w3c.xhr.XMLHttpRequest
 import org.w3c.xhr.XMLHttpRequestResponseType
 import kotlin.js.Promise
 
-val jsonMapper = kotlinx.serialization.json.Json { ignoreUnknownKeys = true }
+val jsonMapper = kotlinx.serialization.json.Json {
+    ignoreUnknownKeys = true
+    serializersModule = SerializersModule {
+        polymorphic(RawTiledLayer::class){
+            subclass(RawTileLayer::class)
+            subclass(RawObjectLayer::class)
+        }
+    }
+}
 
 suspend fun parseMap(mapPath: String): RawTiledMap {
     println("parsing $mapPath")

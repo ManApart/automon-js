@@ -1,18 +1,30 @@
 package tiled
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+//@Serializable
+//sealed class RawTiledLayer {
+//
+//}
 interface RawTiledLayer
 interface RawTiledProperty
 
 @Serializable
-data class RawTiledMap(val tilewidth: Int, val tileheight: Int, val tilesets: List<TilesetReference>, val layers: List<RawTiledLayer>)
+data class RawTiledMap(val layers: List<RawTiledLayer>)
+//data class RawTiledMap(val tilewidth: Int, val tileheight: Int, val tilesets: List<TilesetReference>, val layers: List<RawTiledLayer>)
 
 @Serializable
-data class RawTileLayer(val name: String, val width: Int, val height: Int, val data: List<Int>, val type: String, val x: Int, val y: Int, val properties: List<RawTiledProperty>): RawTiledLayer
+@SerialName("tilelayer")
+data class RawTileLayer(val name: String): RawTiledLayer
+//data class RawTileLayer(val name: String, val width: Int, val height: Int, val data: List<Int>, val x: Int, val y: Int): RawTiledLayer
+//data class RawTileLayer(val name: String, val width: Int, val height: Int, val data: List<Int>, val x: Int, val y: Int, val properties: List<RawTiledProperty>): RawTiledLayer
 
 @Serializable
-data class RawObjectLayer(val name: String, val objects: List<Int>, val type: String, val x: Int, val y: Int, val properties: List<RawTiledProperty>): RawTiledLayer
+@SerialName("objectgroup")
+data class RawObjectLayer(val name: String): RawTiledLayer
+//data class RawObjectLayer(val name: String, val objects: List<Int>, val x: Int, val y: Int): RawTiledLayer
+//data class RawObjectLayer(val name: String, val objects: List<Int>, val x: Int, val y: Int, val properties: List<RawTiledProperty>): RawTiledLayer
 
 @Serializable
 data class RawObject(val name: String, val id: Int, val properties: List<RawTiledProperty>, val rotation: Int, val x: Float, val y: Float)

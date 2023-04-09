@@ -13,4 +13,5 @@ suspend fun main() {
         }
     }
     val map = parseMap("./assets/map.json")
+    println("parsed ${JSON.stringify(map)}")
 }
