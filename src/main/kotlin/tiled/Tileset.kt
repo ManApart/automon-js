@@ -1,0 +1,4 @@
+package tiled
+
+class Tileset {
+}

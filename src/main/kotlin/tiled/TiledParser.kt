@@ -1,0 +1,5 @@
+package tiled
+
+fun parseMap(){
+
+}
