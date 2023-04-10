@@ -17,6 +17,10 @@ val jsonMapper = kotlinx.serialization.json.Json {
             subclass(RawTileLayer::class)
             subclass(RawObjectLayer::class)
         }
+        polymorphic(RawTiledProperty::class){
+            subclass(RawStringProperty::class)
+            subclass(RawIntProperty::class)
+        }
     }
 }
 
@@ -28,6 +32,7 @@ suspend fun parseMap(mapPath: String): RawTiledMap {
     return jsonMapper.decodeFromString(JSON.stringify(json))
 }
 
+@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 private fun loadJson(url: String): Promise<kotlin.js.Json> {
     return Promise { resolve, _ ->
         XMLHttpRequest().apply {
