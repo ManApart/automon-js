@@ -13,23 +13,30 @@ import kotlin.js.Promise
 val jsonMapper = kotlinx.serialization.json.Json {
     ignoreUnknownKeys = true
     serializersModule = SerializersModule {
-        polymorphic(RawTiledLayer::class){
+        polymorphic(RawTiledLayer::class) {
             subclass(RawTileLayer::class)
             subclass(RawObjectLayer::class)
         }
-        polymorphic(RawTiledProperty::class){
+        polymorphic(RawTiledProperty::class) {
             subclass(RawStringProperty::class)
             subclass(RawIntProperty::class)
         }
     }
 }
 
-suspend fun parseMap(mapPath: String): RawTiledMap {
-    println("parsing $mapPath")
-    val json = promise { loadJson(mapPath) }
-    println("parsing ${JSON.stringify(json)}")
+suspend fun parseMap(mapName: String): RawTiledMap {
+    println("parsing $mapName")
+    val json = promise { loadJson("./assets/$mapName") }
 
-    return jsonMapper.decodeFromString(JSON.stringify(json))
+    val rawMap = jsonMapper.decodeFromString<RawTiledMap>(JSON.stringify(json))
+    val tileSets = rawMap.tilesets.associate { tilesetReference ->
+        val fileName ="assets/" + tilesetReference.source.replace("tsx", "json")
+        val tilesetJson = promise { loadJson(fileName) }
+        val rawTileset = jsonMapper.decodeFromString<RawTileset>(JSON.stringify(tilesetJson))
+        tilesetReference.firstgid to rawTileset
+    }
+    println(tileSets)
+    return rawMap
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")

@@ -12,6 +12,6 @@ suspend fun main() {
             +"Hello from JS"
         }
     }
-    val map = parseMap("./assets/map.json")
+    val map = parseMap("map.json")
     println("parsed ${JSON.stringify(map)}")
 }
