@@ -8,7 +8,7 @@ data class TiledMap(val name: String, val width: Int, val height: Int, val layer
 
 data class TileLayer(val name: String, val x: Int, val y: Int, val width: Int, val height: Int, val tiles: Map<Int, Map<Int, Tile>>, val properties: Properties = Properties()) : TiledLayer
 
-data class Tile(val name: String)
+data class Tile(val id: String, val image: String, val imageX: Int, val iamgeY: Int, val width: Int, val height: Int, val properties: Properties = Properties())
 
 data class ObjectLayer(val name: String, val x: Int, val y: Int, val width: Int, val height: Int, val objects: List<Object>): TiledLayer
 
