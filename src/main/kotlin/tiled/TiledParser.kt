@@ -20,7 +20,7 @@ val jsonMapper = kotlinx.serialization.json.Json {
     }
 }
 
-suspend fun parseMap(mapName: String): RawTiledMap {
+suspend fun parseMap(mapName: String): TiledMap {
     println("parsing $mapName")
     val json = loadJson("./assets/$mapName")
 
@@ -31,6 +31,5 @@ suspend fun parseMap(mapName: String): RawTiledMap {
         val rawTileset = jsonMapper.decodeFromString<RawTileset>(JSON.stringify(tilesetJson))
         tilesetReference.firstgid to rawTileset
     }
-    println(tileSets)
-    return rawMap
+    return rawMap.parse(mapName, tileSets)
 }

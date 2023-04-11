@@ -2,9 +2,10 @@ package tiled
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
 
 interface RawTiledLayer {
-    fun parse(rawTileSets: Map<String, RawTileset>): TiledLayer
+    fun parse(rawTileSets: Map<Int, RawTileset>): TiledLayer
 }
 
 interface RawTiledProperty
@@ -12,8 +13,10 @@ interface RawTiledProperty
 @Serializable
 data class RawTiledMap(val tilewidth: Int, val tileheight: Int, val tilesets: List<TilesetReference>, val layers: List<RawTiledLayer>) {
 
-    fun parse(name: String, rawTileSets: Map<String, RawTileset>): TiledMap {
+    fun parse(name: String, rawTileSets: Map<Int, RawTileset>): TiledMap {
+        println("parsing")
         val layers = layers.map { it.parse(rawTileSets) }
+        println("parsing ${JSON.stringify(layers)}")
         return TiledMap(name, tilewidth, tileheight, layers)
     }
 }
@@ -21,17 +24,22 @@ data class RawTiledMap(val tilewidth: Int, val tileheight: Int, val tilesets: Li
 @Serializable
 @SerialName("tilelayer")
 data class RawTileLayer(val name: String, val width: Int, val height: Int, val data: List<Int>, val x: Int, val y: Int, val properties: List<RawTiledProperty>) : RawTiledLayer {
-    override fun parse(rawTileSets: Map<String, RawTileset>): TiledLayer {
+    override fun parse(rawTileSets: Map<Int, RawTileset>): TiledLayer {
+        println("Parsing tile layer")
         val tiles = parseTiles(data, rawTileSets.values.first())
+        println("parsed tiles")
         val properties = properties.parseProperties()
+        println("parsed props")
         return TileLayer(name, x, y, width, height, tiles, properties)
     }
 }
 
 private fun parseTiles(data: List<Int>, tileset: RawTileset): Map<Int, Map<Int, Tile>> {
     val rawTiles = tileset.parse()
+    println(jsonMapper.encodeToString(rawTiles.keys))
     return data.chunked(tileset.columns).mapIndexed { y, row ->
         y to row.mapIndexed { x, tileId ->
+            println("id $tileId ${rawTiles[tileId]}")
             x to rawTiles[tileId]!!
         }.toMap()
     }.toMap()
@@ -40,13 +48,18 @@ private fun parseTiles(data: List<Int>, tileset: RawTileset): Map<Int, Map<Int, 
 @Serializable
 @SerialName("objectgroup")
 data class RawObjectLayer(val name: String, val objects: List<RawObject>, val x: Int, val y: Int) : RawTiledLayer {
-    override fun parse(rawTileSets: Map<String, RawTileset>): TiledLayer {
-        TODO("Not yet implemented")
+    override fun parse(rawTileSets: Map<Int, RawTileset>): TiledLayer {
+        println("Parsing object layer")
+        return ObjectLayer(name, x, y, objects.map { it.parse() })
     }
 }
 
 @Serializable
-data class RawObject(val name: String, val id: Int, val properties: List<RawTiledProperty>, val rotation: Int, val x: Float, val y: Float)
+data class RawObject(val name: String, val id: Int, val properties: List<RawTiledProperty>, val rotation: Int, val x: Float, val y: Float) {
+    fun parse(): Object {
+        return Object(id, name, x, y, rotation, properties.parseProperties())
+    }
+}
 
 @Serializable
 data class TilesetReference(val firstgid: Int, val source: String)
