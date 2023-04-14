@@ -19,7 +19,7 @@ suspend fun main() {
         }
     }
     val map = parseMap("map.json")
-    println("parsed ${JSON.stringify(map)}")
+    println("parsed map")
 }
 
 

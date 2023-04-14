@@ -14,7 +14,6 @@ interface RawTiledProperty
 data class RawTiledMap(val tilewidth: Int, val tileheight: Int, val tilesets: List<TilesetReference>, val layers: List<RawTiledLayer>) {
 
     fun parse(name: String, rawTileSets: Map<Int, RawTileset>): TiledMap {
-        println("parsing")
         val layers = layers.map { it.parse(rawTileSets) }
         return TiledMap(name, tilewidth, tileheight, layers)
     }
@@ -32,10 +31,8 @@ data class RawTileLayer(val name: String, val width: Int, val height: Int, val d
 
 private fun parseTiles(data: List<Int>, tileset: RawTileset): Map<Int, Map<Int, Tile>> {
     val rawTiles = tileset.parse()
-    println(jsonMapper.encodeToString(rawTiles.keys))
     return data.chunked(tileset.columns).mapIndexed { y, row ->
         y to row.mapIndexed { x, tileId ->
-            println("id $tileId ${rawTiles[tileId]}")
             x to rawTiles[tileId]!!
         }.toMap()
     }.toMap()
@@ -45,7 +42,6 @@ private fun parseTiles(data: List<Int>, tileset: RawTileset): Map<Int, Map<Int, 
 @SerialName("objectgroup")
 data class RawObjectLayer(val name: String, val objects: List<RawObject>, val x: Int, val y: Int) : RawTiledLayer {
     override fun parse(rawTileSets: Map<Int, RawTileset>): TiledLayer {
-        println("Parsing object layer")
         return ObjectLayer(name, x, y, objects.map { it.parse() })
     }
 }
