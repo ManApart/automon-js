@@ -16,7 +16,6 @@ data class RawTiledMap(val tilewidth: Int, val tileheight: Int, val tilesets: Li
     fun parse(name: String, rawTileSets: Map<Int, RawTileset>): TiledMap {
         println("parsing")
         val layers = layers.map { it.parse(rawTileSets) }
-        println("parsing ${JSON.stringify(layers)}")
         return TiledMap(name, tilewidth, tileheight, layers)
     }
 }
@@ -25,11 +24,8 @@ data class RawTiledMap(val tilewidth: Int, val tileheight: Int, val tilesets: Li
 @SerialName("tilelayer")
 data class RawTileLayer(val name: String, val width: Int, val height: Int, val data: List<Int>, val x: Int, val y: Int, val properties: List<RawTiledProperty>) : RawTiledLayer {
     override fun parse(rawTileSets: Map<Int, RawTileset>): TiledLayer {
-        println("Parsing tile layer")
         val tiles = parseTiles(data, rawTileSets.values.first())
-        println("parsed tiles")
         val properties = properties.parseProperties()
-        println("parsed props")
         return TileLayer(name, x, y, width, height, tiles, properties)
     }
 }

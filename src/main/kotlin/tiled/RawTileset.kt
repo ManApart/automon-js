@@ -16,16 +16,18 @@ class RawTileset(
     val tiles: List<RawTile>
 ) {
     fun parse(): Map<Int, Tile> {
-        return tiles.chunked(columns).mapIndexed { y, row ->
-            row.mapIndexed { x, raw ->
-                Tile(raw.id, image, x*tilewidth, y*tileheight, tilewidth, tileheight, raw.properties.parseProperties())
+        val rawById = tiles.associateBy { it.id }
+        return (0..tilecount).chunked(columns).mapIndexed { y, row ->
+            row.mapIndexed { x, tileId ->
+                val raw = rawById[tileId] ?: RawTile(tileId)
+                Tile(raw.id, image, x * tilewidth, y * tileheight, tilewidth, tileheight, raw.properties.parseProperties())
             }
         }.flatten().associateBy { it.id }
     }
 }
 
 @Serializable
-data class RawTile(val id: Int, val animation: List<RawAnimation> = listOf(), val properties: List<RawTiledProperty>)
+data class RawTile(val id: Int, val animation: List<RawAnimation> = listOf(), val properties: List<RawTiledProperty> = listOf())
 
 @Serializable
 @SerialName("tilelayer")
