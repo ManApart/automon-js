@@ -1,9 +1,8 @@
 import kotlinx.html.div
 import kotlinx.html.dom.append
-import org.w3c.dom.Node
 import kotlinx.browser.document
-import kotlinx.browser.window
 import kotlinx.coroutines.delay
+import org.w3c.dom.Image
 import org.w3c.xhr.JSON
 import org.w3c.xhr.XMLHttpRequest
 import org.w3c.xhr.XMLHttpRequestResponseType
@@ -52,4 +51,20 @@ suspend fun <T> promise(lambda: () -> Promise<T?>): T? {
     }
 
     return result
+}
+
+suspend fun loadImage(path: String): Image{
+    var loaded = false
+    val image = Image()
+    println("Loading")
+    image.onload = {
+        println("loaded")
+        loaded = true
+        Unit
+    }
+    image.src = path
+    while (!loaded) {
+        delay(10)
+    }
+    return image
 }
