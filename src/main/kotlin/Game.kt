@@ -1,0 +1,5 @@
+object Game {
+    fun tick() {
+
+    }
+}
