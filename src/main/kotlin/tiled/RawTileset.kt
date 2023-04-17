@@ -26,9 +26,10 @@ class RawTileset(
         val width = tilewidth.toDouble()
         val height = tileheight.toDouble()
 
+        //TODO - willReadFrequently
         val tileSheetCtx = (document.createElement("canvas") as HTMLCanvasElement).getContext("2d") as CanvasRenderingContext2D
         val tileCanvas = (document.createElement("canvas") as HTMLCanvasElement)
-        val tileCtx = tileCanvas.getContext("2d") as CanvasRenderingContext2D
+        val tileCtx = tileCanvas.getContext("2d" ) as CanvasRenderingContext2D
 
         val tileSheet = loadImage("assets/$image")
         tileSheetCtx.drawImage(tileSheet, 0.0, 0.0)

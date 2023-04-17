@@ -2,7 +2,6 @@ package tiled
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 
 interface RawTiledLayer {
     suspend fun parse(rawTileSets: Map<Int, RawTileset>): TiledLayer
@@ -23,15 +22,15 @@ data class RawTiledMap(val tilewidth: Int, val tileheight: Int, val tilesets: Li
 @SerialName("tilelayer")
 data class RawTileLayer(val name: String, val width: Int, val height: Int, val data: List<Int>, val x: Int, val y: Int, val properties: List<RawTiledProperty>) : RawTiledLayer {
     override suspend fun parse(rawTileSets: Map<Int, RawTileset>): TiledLayer {
-        val tiles = parseTiles(data, rawTileSets.values.first())
+        val tiles = parseTiles(data, width, rawTileSets.values.first())
         val properties = properties.parseProperties()
         return TileLayer(name, x, y, width, height, tiles, properties)
     }
 }
 
-private suspend fun parseTiles(data: List<Int>, tileset: RawTileset): Map<Int, Map<Int, Tile>> {
+private suspend fun parseTiles(data: List<Int>, width: Int, tileset: RawTileset): Map<Int, Map<Int, Tile>> {
     val rawTiles = tileset.parse()
-    return data.chunked(tileset.columns).mapIndexed { y, row ->
+    return data.chunked(width).mapIndexed { y, row ->
         y to row.mapIndexed { x, tileId ->
             x to rawTiles[tileId]!!
         }.toMap()

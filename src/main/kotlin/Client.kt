@@ -1,5 +1,3 @@
-import kotlinx.html.div
-import kotlinx.html.dom.append
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.delay
@@ -8,7 +6,6 @@ import org.w3c.dom.Image
 import org.w3c.xhr.JSON
 import org.w3c.xhr.XMLHttpRequest
 import org.w3c.xhr.XMLHttpRequestResponseType
-import tiled.parseMap
 import ui.overlandView
 import kotlin.js.Json
 import kotlin.js.Promise
@@ -17,12 +14,6 @@ const val tickRate = 300
 var uiTicker: () -> Unit = {}
 
 suspend fun main() {
-    val container = document.getElementById("root") ?: error("Couldn't find container!")
-    container.append {
-        div {
-            +"Hello from JS"
-        }
-    }
     window.setInterval(::tick, tickRate)
     overlandView()
 }
@@ -67,9 +58,7 @@ suspend fun <T> promise(lambda: () -> Promise<T?>): T? {
 suspend fun loadImage(path: String): Image{
     var loaded = false
     val image = Image()
-    println("Loading")
     image.onload = {
-        println("loaded")
         loaded = true
         Unit
     }

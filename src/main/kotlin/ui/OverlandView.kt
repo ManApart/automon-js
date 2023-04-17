@@ -4,6 +4,8 @@ import clearSections
 import el
 import kotlinx.html.*
 import kotlinx.html.dom.append
+import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 import tiled.ObjectLayer
 import tiled.TileLayer
@@ -18,33 +20,34 @@ suspend fun overlandView() {
     section.append {
         div {
             id = "map-wrapper"
-            map.layers.forEach { layer ->
-                when (layer) {
-                    is TileLayer -> drawLayer(layer)
-                    is ObjectLayer -> drawLayer(layer)
-                }
+            canvas {
+                id = "map-canvas"
             }
+
+        }
+    }
+    val canvas = el<HTMLCanvasElement>("map-canvas").getContext("2d") as CanvasRenderingContext2D
+    map.layers.forEach { layer ->
+        when (layer) {
+            is TileLayer -> canvas.drawLayer(layer)
+            is ObjectLayer -> canvas.drawLayer(layer)
         }
     }
 }
 
-fun TagConsumer<HTMLElement>.drawLayer(layer: TileLayer) {
-    div("tile-layer") {
-        layer.tiles.entries.forEach { (y, row) ->
-            div("tile-row") {
-                row.entries.forEach { (x, tile) ->
-                    div("tile"){
-                        img(tile.id.toString()) {
-                            classes = setOf("tile-image")
-                            src = tile.image.src
-                        }
-                    }
-                }
-            }
+fun CanvasRenderingContext2D.drawLayer(layer: TileLayer) {
+    val tiles = layer.tiles.flatMap { it.value.values }.count()
+    val row = layer.tiles.values.size
+    val col = layer.tiles.values.first().values.size
+    println("Drawing Layer ${layer.width}x${layer.height}, $tiles, ($row, $col)")
+    layer.tiles.entries.forEach { (y, row) ->
+        row.entries.forEach { (x, tile) ->
+//            println("($x,$y): ${tile.id} ${tile.width}x${tile.height}")
+            drawImage(tile.image, x.toDouble() * tile.width, y.toDouble() * tile.height)
         }
     }
 }
 
-fun TagConsumer<HTMLElement>.drawLayer(layer: ObjectLayer) {
+fun CanvasRenderingContext2D.drawLayer(layer: ObjectLayer) {
 
 }
