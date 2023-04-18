@@ -1,13 +1,12 @@
 package tiled
 
-import org.w3c.dom.Image
 import org.w3c.dom.ImageData
 
 interface TiledLayer
 
 data class Properties(val strings: Map<String, String> = mapOf(), val ints: Map<String, Int> = mapOf())
 
-data class TiledMap(val name: String, val width: Int, val height: Int, val layers: List<TiledLayer>)
+data class TiledMap(val name: String, val width: Int, val height: Int, val tileWidth: Int, val tileHeight: Int, val layers: List<TiledLayer>)
 
 data class TileLayer(val name: String, val x: Int, val y: Int, val width: Int, val height: Int, val tiles: Map<Int, Map<Int, Tile>>, val properties: Properties = Properties()) : TiledLayer
 

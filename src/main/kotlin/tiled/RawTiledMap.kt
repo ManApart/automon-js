@@ -10,11 +10,11 @@ interface RawTiledLayer {
 interface RawTiledProperty
 
 @Serializable
-data class RawTiledMap(val tilewidth: Int, val tileheight: Int, val tilesets: List<TilesetReference>, val layers: List<RawTiledLayer>) {
+data class RawTiledMap(val width: Int, val height: Int, val tilewidth: Int, val tileheight: Int, val tilesets: List<TilesetReference>, val layers: List<RawTiledLayer>) {
 
     suspend fun parse(name: String, rawTileSets: Map<Int, RawTileset>): TiledMap {
         val layers = layers.map { it.parse(rawTileSets) }
-        return TiledMap(name, tilewidth, tileheight, layers)
+        return TiledMap(name, width, height, tilewidth, tileheight, layers)
     }
 }
 
