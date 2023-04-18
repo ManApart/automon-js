@@ -43,9 +43,6 @@ fun CanvasRenderingContext2D.drawLayer(layer: TileLayer) {
     val row = layer.tiles.values.size
     val col = layer.tiles.values.first().values.size
     println("Drawing Layer ${layer.width}x${layer.height}, $tiles, ($row, $col)")
-    fillStyle = "blue"
-    val first = layer.tiles.values.first().values.first()
-    fillRect(0.0, 0.0, layer.width.toDouble() * first.width, layer.height.toDouble() * first.width)
     layer.tiles.entries.forEach { (y, row) ->
         row.entries.forEach { (x, tile) ->
             putImageData(tile.image, x.toDouble() * tile.width, y.toDouble() * tile.height)

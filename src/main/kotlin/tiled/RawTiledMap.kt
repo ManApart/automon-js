@@ -32,7 +32,8 @@ private suspend fun parseTiles(data: List<Int>, width: Int, tileset: RawTileset)
     val rawTiles = tileset.parse()
     return data.chunked(width).mapIndexed { y, row ->
         y to row.mapIndexed { x, tileId ->
-            x to rawTiles[tileId]!!
+            //Tilemaps seem to add 1 to the tile id
+            x to rawTiles[tileId-1]!!
         }.toMap()
     }.toMap()
 }
