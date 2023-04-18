@@ -27,6 +27,7 @@ suspend fun overlandView() {
         }
     }
     val canvas = el<HTMLCanvasElement>("map-canvas").getContext("2d") as CanvasRenderingContext2D
+    canvas.scale(4.0, 4.0)
     map.layers.forEach { layer ->
         when (layer) {
             is TileLayer -> canvas.drawLayer(layer)
@@ -40,10 +41,12 @@ fun CanvasRenderingContext2D.drawLayer(layer: TileLayer) {
     val row = layer.tiles.values.size
     val col = layer.tiles.values.first().values.size
     println("Drawing Layer ${layer.width}x${layer.height}, $tiles, ($row, $col)")
+    fillStyle = "blue"
+    val first = layer.tiles.values.first().values.first()
+    fillRect(0.0, 0.0, layer.width.toDouble() * first.width, layer.height.toDouble() * first.width)
     layer.tiles.entries.forEach { (y, row) ->
         row.entries.forEach { (x, tile) ->
-//            println("($x,$y): ${tile.id} ${tile.width}x${tile.height}")
-            drawImage(tile.image, x.toDouble() * tile.width, y.toDouble() * tile.height)
+            putImageData(tile.image,  x.toDouble() * tile.width, y.toDouble() * tile.height)
         }
     }
 }

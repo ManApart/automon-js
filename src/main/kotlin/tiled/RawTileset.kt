@@ -1,14 +1,11 @@
 package tiled
 
 import kotlinx.browser.document
-import kotlinx.coroutines.delay
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import loadImage
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
-import org.w3c.dom.Image
-import org.w3c.dom.RenderingContext
 
 @Serializable
 class RawTileset(
@@ -26,12 +23,12 @@ class RawTileset(
         val width = tilewidth.toDouble()
         val height = tileheight.toDouble()
 
-        //TODO - willReadFrequently
-        val tileSheetCtx = (document.createElement("canvas") as HTMLCanvasElement).getContext("2d") as CanvasRenderingContext2D
-        val tileCanvas = (document.createElement("canvas") as HTMLCanvasElement)
-        val tileCtx = tileCanvas.getContext("2d" ) as CanvasRenderingContext2D
+        val tileSheetCanvas = (document.createElement("canvas") as HTMLCanvasElement)
+        val tileSheetCtx = tileSheetCanvas.getContext("2d", js("{ willReadFrequently: true }")) as CanvasRenderingContext2D
 
         val tileSheet = loadImage("assets/$image")
+        tileSheetCanvas.width = tileSheet.width
+        tileSheetCanvas.height = tileSheet.height
         tileSheetCtx.drawImage(tileSheet, 0.0, 0.0)
 
 
@@ -41,11 +38,8 @@ class RawTileset(
                 val raw = rawById[tileId] ?: RawTile(tileId)
 
                 val data = tileSheetCtx.getImageData(x * width, y * height, width, height)
-                tileCtx.putImageData(data, 0.0, 0.0)
-                val image = Image()
-                image.src = tileCanvas.toDataURL()
 
-                Tile(raw.id, image, tilewidth, tileheight, raw.properties.parseProperties())
+                Tile(raw.id, data, tilewidth, tileheight, raw.properties.parseProperties())
             }
         }.flatten().associateBy { it.id }
     }
