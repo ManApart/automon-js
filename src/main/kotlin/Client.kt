@@ -10,8 +10,8 @@ import ui.overlandView
 import kotlin.js.Json
 import kotlin.js.Promise
 
-const val tickRate = 300
-var uiTicker: () -> Unit = {}
+const val tickRate = 100
+var uiTicker: (Int) -> Unit = {}
 
 suspend fun main() {
     window.setInterval(::tick, tickRate)
@@ -19,8 +19,8 @@ suspend fun main() {
 }
 
 private fun tick() {
-    Game.tick()
-    uiTicker()
+    Game.tick(tickRate)
+    uiTicker(tickRate)
 }
 
 

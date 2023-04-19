@@ -41,7 +41,18 @@ class RawTileset(
 
                 Tile(raw.id, data, tilewidth, tileheight, raw.properties.parseProperties())
             }
-        }.flatten().associateBy { it.id }
+        }.flatten().associateBy { it.id }.also { tiles ->
+            parseAnimations(tiles, rawById)
+        }
+    }
+
+    private fun parseAnimations(tiles: Map<Int, Tile>, rawById: Map<Int, RawTile>) {
+        tiles.values.forEach { tile ->
+            val raw = rawById[tile.id]
+            if (raw != null && raw.animation.isNotEmpty()) {
+                tile.animation = Animation(raw.animation.map { tiles[it.tileid]!! to it.duration })
+            }
+        }
     }
 }
 

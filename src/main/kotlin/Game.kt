@@ -1,5 +1,5 @@
 object Game {
-    fun tick() {
+    fun tick(tickRate: Int) {
 
     }
 }
