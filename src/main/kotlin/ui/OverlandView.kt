@@ -10,7 +10,7 @@ import org.w3c.dom.HTMLElement
 import tiled.*
 import uiTicker
 
-private val animatedTiles = mutableListOf<TileInstance>()
+private val animatedTiles = mutableMapOf<Tile, MutableSet<Pair<Int, Int>>>()
 private lateinit var ctx: CanvasRenderingContext2D
 
 suspend fun overlandView() {
@@ -48,7 +48,9 @@ fun CanvasRenderingContext2D.drawLayer(layer: TileLayer) {
     layer.tiles.entries.forEach { (y, row) ->
         row.entries.forEach { (x, tile) ->
             putImageData(tile.image, x.toDouble() * tile.width, y.toDouble() * tile.height)
-            if (tile.animation.steps.isNotEmpty()) animatedTiles.add(TileInstance(x, y, tile))
+            if (tile.animation.steps.isNotEmpty()) {
+                animatedTiles.getOrPut(tile) { mutableSetOf() }.add(x to y)
+            }
         }
     }
 }
@@ -58,14 +60,13 @@ fun CanvasRenderingContext2D.drawLayer(layer: ObjectLayer) {
 }
 
 private fun updateUI(timePassed: Int) {
-    animatedTiles.forEach { tile ->
-        val animation = tile.tile.animation
-        if (tile.x==1) {
-            println("Animating water, ${animation.currentStep}, ${animation.timeLeft}")
-        }
+    animatedTiles.entries.forEach { (tile, instances) ->
+        val animation = tile.animation
         if (animation.shouldStep(timePassed)) {
             animation.step()
-            ctx.putImageData(animation.getData(), tile.x.toDouble() * tile.tile.width, tile.y.toDouble() * tile.tile.height)
+            instances.forEach { (x, y) ->
+                ctx.putImageData(animation.getData(), x.toDouble() * tile.width, y.toDouble() * tile.height)
+            }
         }
     }
 }
