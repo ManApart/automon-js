@@ -50,7 +50,7 @@ class RawTileset(
         tiles.values.forEach { tile ->
             val raw = rawById[tile.id]
             if (raw != null && raw.animation.isNotEmpty()) {
-                tile.animation = Animation(raw.animation.map { tiles[it.tileid]!! to it.duration })
+                tile.animation = TileAnimation(raw.animation.map { tiles[it.tileid]!! to it.duration })
             }
         }
     }
