@@ -1,13 +1,20 @@
 package ui
 
+import loadImage
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.Image
 
-data class Sprite(val tileSheet: Image, val frameWidth: Int, val frameHeight: Int, val framesPerChange: Int, val animations: Map<String, Animation>) {
+fun anim(name: String, vararg steps: FramePosition): Animation {
+    return Animation(name, steps.toList())
+}
+
+suspend fun sprite(tileSheet: String, frameWidth: Int, frameHeight: Int, framesPerChange: Int, vararg animations: Animation): Sprite{
+    return Sprite(loadImage(tileSheet), frameWidth.toDouble(), frameHeight.toDouble(),framesPerChange, animations.associateBy { it.name })
+}
+
+data class Sprite(val tileSheet: Image, val frameWidth: Double, val frameHeight: Double, val framesPerChange: Int, val animations: Map<String, Animation>) {
     var x: Double = 0.0
     var y: Double = 0.0
-    private val fw = frameWidth.toDouble()
-    private val fh = frameHeight.toDouble()
     private var animation = animations.values.first()
     private var frameCount = 0
 
@@ -28,13 +35,13 @@ data class Sprite(val tileSheet: Image, val frameWidth: Int, val frameHeight: In
     }
 
     fun draw(ctx: CanvasRenderingContext2D) {
-        val (sx, sy) = animation.current(fw, fh)
-        ctx.drawImage(tileSheet, sx, sy, fw, fh, x, y, fw, fh)
+        val (sx, sy) = animation.current(frameWidth, frameHeight)
+        ctx.drawImage(tileSheet, sx, sy, frameWidth, frameHeight, x, y, frameWidth, frameHeight)
     }
 }
 
 data class FramePosition(val col: Int, val row: Int)
-infix fun Int.by(row: Int) = FramePosition(this, row)
+infix fun Int.x(row: Int) = FramePosition(this, row)
 
 data class Animation(val name: String, val steps: List<FramePosition>, var currentStep: Int = 0) {
 
