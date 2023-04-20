@@ -55,11 +55,9 @@ fun CanvasRenderingContext2D.drawLayer(layer: TileLayer) {
     }
 }
 
-fun CanvasRenderingContext2D.drawLayer(layer: ObjectLayer) {
+fun CanvasRenderingContext2D.drawLayer(layer: ObjectLayer) {}
 
-}
-
-private fun updateUI(timePassed: Int) {
+private fun updateUI(timePassed: Double) {
     animatedTiles.entries.forEach { (tile, instances) ->
         val animation = tile.animation
         if (animation.shouldStep(timePassed)) {

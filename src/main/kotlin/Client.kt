@@ -11,16 +11,24 @@ import kotlin.js.Json
 import kotlin.js.Promise
 
 const val tickRate = 100
-var uiTicker: (Int) -> Unit = {}
+var uiTicker: (Double) -> Unit = {}
+private var lastFrame = 0.0
 
 suspend fun main() {
     window.setInterval(::tick, tickRate)
+    window.requestAnimationFrame(::uiTick)
     overlandView()
 }
 
 private fun tick() {
     Game.tick(tickRate)
-    uiTicker(tickRate)
+}
+
+private fun uiTick(timeStamp: Double) {
+    val timePassed = timeStamp - lastFrame
+    lastFrame = timeStamp
+    uiTicker(timePassed)
+    window.requestAnimationFrame(::uiTick)
 }
 
 

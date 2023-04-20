@@ -14,10 +14,8 @@ data class Tile(val id: Int, val image: ImageData, val width: Int, val height: I
     var animation: Animation = Animation()
 }
 
-data class TileInstance(val x: Int, val y: Int, val tile: Tile)
-
-data class Animation(val steps: List<Pair<Tile, Int>> = listOf(), var currentStep: Int = 0, var timeLeft: Int = 0) {
-    fun shouldStep(timePassed: Int): Boolean {
+data class Animation(val steps: List<Pair<Tile, Int>> = listOf(), var currentStep: Int = 0, var timeLeft: Double = 0.0) {
+    fun shouldStep(timePassed: Double): Boolean {
         timeLeft -= timePassed
         return timeLeft < 0
     }
@@ -25,7 +23,7 @@ data class Animation(val steps: List<Pair<Tile, Int>> = listOf(), var currentSte
     fun step() {
         currentStep++
         if (currentStep >= steps.size) currentStep = 0
-        timeLeft = steps[currentStep].second
+        timeLeft = steps[currentStep].second.toDouble()
     }
 
     fun getData(): ImageData {
