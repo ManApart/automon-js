@@ -4,6 +4,12 @@ body {
     image-rendering: crisp-edges;
 }
 
-#map-canvas {
+#map-wrapper {
+    position: relative;
+}
+
+.overland-canvas {
+    position: absolute;
+    left: 0;
     height: 800px;
 }

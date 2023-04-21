@@ -1,5 +1,10 @@
 object Game {
-    fun tick(tickRate: Int) {
+    val player = PlayerCharacter()
+
+    suspend fun initialize(){
+        player.initialize()
+    }
+    suspend fun tick(tickRate: Int) {
 
     }
 }

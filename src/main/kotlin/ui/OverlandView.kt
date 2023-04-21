@@ -11,7 +11,8 @@ import tiled.*
 import uiTicker
 
 private val animatedTiles = mutableMapOf<Tile, MutableSet<Pair<Int, Int>>>()
-private lateinit var ctx: CanvasRenderingContext2D
+private lateinit var backgroundCtx: CanvasRenderingContext2D
+private lateinit var spriteCtx: CanvasRenderingContext2D
 
 suspend fun overlandView() {
     val map = parseMap("map.json")
@@ -21,21 +22,29 @@ suspend fun overlandView() {
     section.append {
         div {
             id = "map-wrapper"
-            canvas {
-                id = "map-canvas"
+            canvas("overland-canvas") {
+                id = "map-background-canvas"
             }
-
+            canvas("overland-canvas") {
+                id = "map-sprite-canvas"
+            }
         }
     }
     animatedTiles.clear()
-    val canvas = el<HTMLCanvasElement>("map-canvas")
-    canvas.width = map.tileWidth * map.width
-    canvas.height = map.tileHeight * map.height
-    ctx = canvas.getContext("2d") as CanvasRenderingContext2D
+
+    val backgroundCanvas = el<HTMLCanvasElement>("map-background-canvas")
+    backgroundCanvas.width = map.tileWidth * map.width
+    backgroundCanvas.height = map.tileHeight * map.height
+    backgroundCtx = backgroundCanvas.getContext("2d") as CanvasRenderingContext2D
+    val spriteCanvas = el<HTMLCanvasElement>("map-sprite-canvas")
+    spriteCanvas.width = backgroundCanvas.width
+    spriteCanvas.height = backgroundCanvas.height
+    spriteCtx = spriteCanvas.getContext("2d") as CanvasRenderingContext2D
+
     map.layers.forEach { layer ->
         when (layer) {
-            is TileLayer -> ctx.drawLayer(layer)
-            is ObjectLayer -> ctx.drawLayer(layer)
+            is TileLayer -> backgroundCtx.drawLayer(layer)
+            is ObjectLayer -> backgroundCtx.drawLayer(layer)
         }
     }
 }
@@ -63,8 +72,11 @@ private fun updateUI(timePassed: Double) {
         if (animation.shouldStep(timePassed)) {
             animation.step()
             instances.forEach { (x, y) ->
-                ctx.putImageData(animation.getData(), x.toDouble() * tile.width, y.toDouble() * tile.height)
+                backgroundCtx.putImageData(animation.getData(), x.toDouble() * tile.width, y.toDouble() * tile.height)
             }
         }
     }
+    spriteCtx.clearRect(0.0,0.0, spriteCtx.canvas.width.toDouble(), spriteCtx.canvas.height.toDouble())
+    Game.player.sprite.advanceAnimation()
+    Game.player.sprite.draw(spriteCtx)
 }

@@ -15,12 +15,13 @@ var uiTicker: (Double) -> Unit = {}
 private var lastFrame = 0.0
 
 suspend fun main() {
+    Game.initialize()
     window.setInterval(::tick, tickRate)
     window.requestAnimationFrame(::uiTick)
     overlandView()
 }
 
-private fun tick() {
+private suspend fun tick() {
     Game.tick(tickRate)
 }
 
