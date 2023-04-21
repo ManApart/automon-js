@@ -1,10 +1,12 @@
 object Game {
+    val controller = Controller()
     val player = PlayerCharacter()
 
-    suspend fun initialize(){
+    suspend fun initialize() {
         player.initialize()
     }
-    suspend fun tick(tickRate: Int) {
 
+    suspend fun tick(tickRate: Int) {
+        player.tick(tickRate.toDouble())
     }
 }

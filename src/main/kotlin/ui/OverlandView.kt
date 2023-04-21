@@ -76,7 +76,9 @@ private fun updateUI(timePassed: Double) {
             }
         }
     }
-    spriteCtx.clearRect(0.0,0.0, spriteCtx.canvas.width.toDouble(), spriteCtx.canvas.height.toDouble())
-    Game.player.sprite.advanceAnimation()
-    Game.player.sprite.draw(spriteCtx)
+    spriteCtx.clearRect(0.0, 0.0, spriteCtx.canvas.width.toDouble(), spriteCtx.canvas.height.toDouble())
+    with(Game.player) {
+        sprite.advanceAnimation()
+        sprite.draw(spriteCtx, x, y)
+    }
 }

@@ -13,8 +13,7 @@ suspend fun sprite(tileSheet: String, frameWidth: Int, frameHeight: Int, framesP
 }
 
 data class Sprite(val tileSheet: Image, val frameWidth: Double, val frameHeight: Double, val framesPerChange: Int, val animations: Map<String, Animation>) {
-    var x: Double = 0.0
-    var y: Double = 0.0
+
     private var animation = animations.values.first()
     private var frameCount = 0
 
@@ -34,7 +33,7 @@ data class Sprite(val tileSheet: Image, val frameWidth: Double, val frameHeight:
         }
     }
 
-    fun draw(ctx: CanvasRenderingContext2D) {
+    fun draw(ctx: CanvasRenderingContext2D, x: Double, y: Double) {
         val (sx, sy) = animation.current(frameWidth, frameHeight)
         ctx.drawImage(tileSheet, sx, sy, frameWidth, frameHeight, x, y, frameWidth, frameHeight)
     }
