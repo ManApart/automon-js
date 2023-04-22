@@ -15,6 +15,11 @@ class PlayerCharacter {
         Game.controller.subscribe("pc", ButtonSubscription(" "){
             println("Tile: ${getTile()}")
         })
+        Game.controller.subscribe("pc", ButtonSubscription("s"){
+            enableMusic = !enableMusic
+            println("Set music enabled: $enableMusic")
+            playMusic()
+        })
     }
 
     private suspend fun setupSprite() = sprite(

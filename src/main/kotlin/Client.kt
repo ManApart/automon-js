@@ -15,7 +15,7 @@ import kotlin.js.Promise
 const val tickRate = 16
 var uiTicker: (Double) -> Unit = {}
 private var lastFrame = 0.0
-const val enableMusic = false
+var enableMusic = false
 var musicPlayer: Audio? = null
 
 suspend fun main() {
@@ -91,11 +91,10 @@ fun clearSections() {
     musicPlayer?.pause()
 }
 
-fun playMusic(trackName: String) {
-    if (enableMusic) {
-        musicPlayer?.pause()
-        musicPlayer = Audio("assets/music/$trackName.mp3").also { it.play() }
-    }
+fun playMusic(trackName: String? = null) {
+    musicPlayer?.pause()
+    if (trackName != null) musicPlayer = Audio("assets/music/$trackName.mp3")
+    if (enableMusic) musicPlayer?.play()
 }
 
 fun <T> el(id: String) = document.getElementById(id) as T
