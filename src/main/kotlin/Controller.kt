@@ -2,10 +2,22 @@ import kotlinx.browser.document
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.KeyboardEvent
 
+class ButtonSubscription(val key: String, val action: () -> Unit)
+
 class Controller {
     init {
         document.addEventListener("keydown", ::keyDown)
         document.addEventListener("keyup", ::keyUp)
+    }
+
+    private val subscriptions = mutableMapOf<String, MutableMap<String, ButtonSubscription>>()
+
+    fun subscribe(owner: String, subscription: ButtonSubscription) {
+        subscriptions.getOrPut(owner) { mutableMapOf() }[subscription.key] = subscription
+    }
+
+    fun unSubscribe(owner: String, key: String) {
+        subscriptions[owner]?.remove(key)
     }
 
     var up: Boolean = false
@@ -37,6 +49,8 @@ class Controller {
             "ArrowRight" -> right = false
             else -> println("Released ${event.key}")
         }
+
+        subscriptions.values.flatMap { it.values }.filter { it.key == event.key }.forEach { it.action() }
 
         event.preventDefault()
     }

@@ -1,3 +1,4 @@
+import tiled.TileInstance
 import ui.Sprite
 import ui.anim
 import ui.sprite
@@ -11,6 +12,9 @@ class PlayerCharacter {
 
     suspend fun initialize() {
         sprite = setupSprite()
+        Game.controller.subscribe("pc", ButtonSubscription(" "){
+            println("Tile: ${getTile()}")
+        })
     }
 
     private suspend fun setupSprite() = sprite(
@@ -24,6 +28,10 @@ class PlayerCharacter {
         anim("walk-left", 0 x 2, 1 x 2, 2 x 2, 3 x 2),
         anim("walk-right", 0 x 3, 1 x 3, 2 x 3, 3 x 3),
     )
+
+    fun getTile(): TileInstance {
+        return Game.level!!.getTile(x,y)
+    }
 
     suspend fun tick(timePassed: Double) {
         var dx = 0.0

@@ -10,6 +10,10 @@ data class TiledMap(val name: String, val width: Int, val height: Int, val tileW
 
 data class TileLayer(val name: String, val x: Int, val y: Int, val width: Int, val height: Int, val tiles: Map<Int, Map<Int, Tile>>, val properties: Properties = Properties()) : TiledLayer
 
+data class TileInstance(val x: Int, val y: Int, val tile: Tile) {
+    val pos = Pair(x, y)
+}
+
 data class Tile(val id: Int, val image: ImageData, val width: Int, val height: Int, val properties: Properties = Properties()) {
     var animation: TileAnimation = TileAnimation()
 }
@@ -33,4 +37,17 @@ data class TileAnimation(val steps: List<Pair<Tile, Int>> = listOf(), var curren
 
 data class ObjectLayer(val name: String, val x: Int, val y: Int, val objects: List<Object>) : TiledLayer
 
-data class Object(val id: Int, val name: String, val x: Float, val y: Float, val rotation: Int, val properties: Properties = Properties())
+data class Object(val id: Int, val name: String, val x: Float, val y: Float, val rotation: Int, val properties: Properties = Properties()) {
+
+    fun hasProps(stringProps: List<String>, intProps: List<String>): Boolean {
+        return stringProps.all { properties.strings[it] != null } && intProps.all { properties.ints[it] != null }
+    }
+
+    fun stringProp(key: String): String? {
+        return properties.strings[key]
+    }
+
+    fun intProp(key: String): Int? {
+        return properties.ints[key]
+    }
+}

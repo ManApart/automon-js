@@ -8,6 +8,7 @@ import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 import tiled.*
+import toLevel
 import uiTicker
 
 private val animatedTiles = mutableMapOf<Tile, MutableSet<Pair<Int, Int>>>()
@@ -16,6 +17,7 @@ private lateinit var spriteCtx: CanvasRenderingContext2D
 
 suspend fun overlandView() {
     val map = parseMap("map.json")
+    Game.level = map.toLevel()
     val section = el<HTMLElement>("root")
     clearSections()
     uiTicker = ::updateUI
