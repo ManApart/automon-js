@@ -7,6 +7,7 @@ class PlayerCharacter {
     lateinit var sprite: Sprite
     var x: Double = 0.0
     var y: Double = 0.0
+    private var lastFacing = "down"
 
     suspend fun initialize() {
         sprite = setupSprite()
@@ -14,7 +15,10 @@ class PlayerCharacter {
 
     private suspend fun setupSprite() = sprite(
         "assets/character.png", 16, 20, 10,
-        anim("idle", 0 x 0),
+        anim("idle-down", 0 x 0),
+        anim("idle-up", 0 x 1),
+        anim("idle-left", 0 x 2),
+        anim("idle-right", 0 x 3),
         anim("walk-down", 0 x 0, 1 x 0, 2 x 0, 3 x 0),
         anim("walk-up", 0 x 1, 1 x 1, 2 x 1, 3 x 1),
         anim("walk-left", 0 x 2, 1 x 2, 2 x 2, 3 x 2),
@@ -31,14 +35,32 @@ class PlayerCharacter {
         val movement = 0.5 + 0 //Min speed of 0.5, max speed of 1 if you have 100% movement
 
         with(Game.controller) {
-            if (up) dy = -movement * scale
-            if (down) dy = movement * scale
-            if (left) dx = -movement * scale
-            if (right) dx = movement * scale
+            var animation = "idle-$lastFacing"
+            if (up) {
+                animation = "walk-up"
+                lastFacing = "up"
+                dy = -movement * scale
+            }
+            if (down) {
+                animation ="walk-down"
+                lastFacing = "down"
+                dy = movement * scale
+            }
+            if (left) {
+                animation ="walk-left"
+                lastFacing = "left"
+                dx = -movement * scale
+            }
+            if (right) {
+                animation ="walk-right"
+                lastFacing = "right"
+                dx = movement * scale
+            }
+            sprite.setAnimation(animation)
         }
 //        tryMove(startTile, dx, dy)
-        x +=dx
-        y +=dy
+        x += dx
+        y += dy
     }
 
 }
