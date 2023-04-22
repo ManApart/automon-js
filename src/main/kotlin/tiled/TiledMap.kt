@@ -40,7 +40,7 @@ data class ObjectLayer(val name: String, val x: Int, val y: Int, val objects: Li
 data class Object(val id: Int, val name: String, val x: Float, val y: Float, val rotation: Int, val properties: Properties = Properties()) {
 
     fun hasProps(stringProps: List<String>, intProps: List<String>): Boolean {
-        return stringProps.all { properties.strings[it] != null } && intProps.all { properties.ints[it] != null }
+        return stringProps.all { properties.strings.containsKey(it) } && intProps.all { properties.ints.containsKey(it) }
     }
 
     fun stringProp(key: String): String? {

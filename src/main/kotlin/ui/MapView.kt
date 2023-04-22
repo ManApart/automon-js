@@ -15,9 +15,11 @@ private val animatedTiles = mutableMapOf<Tile, MutableSet<Pair<Int, Int>>>()
 private lateinit var backgroundCtx: CanvasRenderingContext2D
 private lateinit var spriteCtx: CanvasRenderingContext2D
 
-suspend fun overlandView() {
-    val map = parseMap("map.json")
+suspend fun mapView(mapName: String = "map", startTileX: Int = 0, startTileY: Int = 0) {
+    val map = parseMap(mapName)
     Game.level = map.toLevel()
+    Game.player.x = startTileX * Game.level!!.tileWidth.toDouble()
+    Game.player.y = startTileY * Game.level!!.tileWidth.toDouble()
     val section = el<HTMLElement>("root")
     clearSections()
     uiTicker = ::updateUI

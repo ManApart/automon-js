@@ -1,12 +1,13 @@
 import kotlinx.browser.document
 import kotlinx.browser.window
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.Image
 import org.w3c.xhr.JSON
 import org.w3c.xhr.XMLHttpRequest
 import org.w3c.xhr.XMLHttpRequestResponseType
-import ui.overlandView
+import ui.mapView
+import kotlin.coroutines.CoroutineContext
 import kotlin.js.Json
 import kotlin.js.Promise
 
@@ -18,11 +19,14 @@ suspend fun main() {
     Game.initialize()
     window.setInterval(::tick, tickRate)
     window.requestAnimationFrame(::uiTick)
-    overlandView()
+    mapView()
 }
 
-private suspend fun tick() {
-    Game.tick(tickRate)
+@OptIn(DelicateCoroutinesApi::class)
+private fun tick() {
+    GlobalScope.launch {
+        Game.tick(tickRate)
+    }
 }
 
 private fun uiTick(timeStamp: Double) {
@@ -64,7 +68,7 @@ suspend fun <T> promise(lambda: () -> Promise<T?>): T? {
     return result
 }
 
-suspend fun loadImage(path: String): Image{
+suspend fun loadImage(path: String): Image {
     var loaded = false
     val image = Image()
     image.onload = {
