@@ -49,6 +49,7 @@ suspend fun mapView(mapName: String = "map", startTileX: Int = 0, startTileY: In
     spriteCanvas.width = backgroundCanvas.width
     spriteCanvas.height = backgroundCanvas.height
     spriteCtx = spriteCanvas.getContext("2d") as CanvasRenderingContext2D
+    spriteCtx.imageSmoothingEnabled = false
 
     map.layers.forEach { layer ->
         when (layer) {
