@@ -5,6 +5,8 @@ import org.w3c.dom.events.KeyboardEvent
 class ButtonSubscription(val key: String, val action: () -> Unit)
 
 class Controller {
+    private var interactedWith = false
+
     init {
         document.addEventListener("keydown", ::keyDown)
         document.addEventListener("keyup", ::keyUp)
@@ -28,30 +30,46 @@ class Controller {
     fun keyDown(event: Event) {
         if (event.defaultPrevented) return
         if (event !is KeyboardEvent) return
+
+        if (!interactedWith) {
+            interactedWith = true
+            Game.firstPlayerInteraction()
+        }
+
+        var keyCaptured = true
         when (event.key) {
             "ArrowUp" -> up = true
             "ArrowDown" -> down = true
             "ArrowLeft" -> left = true
             "ArrowRight" -> right = true
-            else -> println("Pressed ${event.key}")
+            else -> {
+                keyCaptured = false
+                println("Pressed ${event.key}")
+            }
         }
-
-        event.preventDefault()
+        if (keyCaptured) event.preventDefault()
     }
 
     fun keyUp(event: Event) {
         if (event.defaultPrevented) return
         if (event !is KeyboardEvent) return
+
+        var keyCaptured = true
         when (event.key) {
             "ArrowUp" -> up = false
             "ArrowDown" -> down = false
             "ArrowLeft" -> left = false
             "ArrowRight" -> right = false
-            else -> println("Released ${event.key}")
+            else -> {
+                keyCaptured = false
+                println("Released ${event.key}")
+            }
         }
 
-        subscriptions.values.flatMap { it.values }.filter { it.key == event.key }.forEach { it.action() }
+        val matchingSubscriptions = subscriptions.values.flatMap { it.values }.filter { it.key == event.key }
+        keyCaptured = keyCaptured || matchingSubscriptions.isNotEmpty()
+        matchingSubscriptions.forEach { it.action() }
 
-        event.preventDefault()
+        if (keyCaptured) event.preventDefault()
     }
 }

@@ -1,6 +1,7 @@
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.*
+import org.w3c.dom.Audio
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.Image
 import org.w3c.xhr.JSON
@@ -14,6 +15,8 @@ import kotlin.js.Promise
 const val tickRate = 100
 var uiTicker: (Double) -> Unit = {}
 private var lastFrame = 0.0
+const val enableMusic = true
+var musicPlayer: Audio? = null
 
 suspend fun main() {
     Game.initialize()
@@ -85,6 +88,14 @@ suspend fun loadImage(path: String): Image {
 fun clearSections() {
     el<HTMLElement>("root").innerHTML = ""
     uiTicker = {}
+    musicPlayer?.pause()
+}
+
+fun playMusic(trackName: String) {
+    if (enableMusic) {
+        musicPlayer?.pause()
+        musicPlayer = Audio("assets/music/$trackName.mp3").also { it.play() }
+    }
 }
 
 fun <T> el(id: String) = document.getElementById(id) as T

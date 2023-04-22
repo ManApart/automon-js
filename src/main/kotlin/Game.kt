@@ -11,4 +11,8 @@ object Game {
         player.tick(tickRate.toDouble())
         level?.tick(tickRate.toDouble())
     }
+
+    fun firstPlayerInteraction(){
+        level?.music?.let { playMusic(it) }
+    }
 }

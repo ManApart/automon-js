@@ -2,11 +2,15 @@ package ui
 
 import clearSections
 import el
+import enableMusic
 import kotlinx.html.*
 import kotlinx.html.dom.append
+import musicPlayer
+import org.w3c.dom.Audio
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
+import playMusic
 import tiled.*
 import toLevel
 import uiTicker
@@ -52,6 +56,7 @@ suspend fun mapView(mapName: String = "map", startTileX: Int = 0, startTileY: In
             is ObjectLayer -> backgroundCtx.drawLayer(layer)
         }
     }
+    Game.level?.music?.let { playMusic(it) }
 }
 
 fun CanvasRenderingContext2D.drawLayer(layer: TileLayer) {

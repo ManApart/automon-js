@@ -1,4 +1,3 @@
-import tiled.Tile
 import tiled.TileInstance
 import ui.Sprite
 import ui.anim
