@@ -3,9 +3,11 @@ package ui
 import clearSections
 import el
 import enableMusic
+import kotlinx.browser.document
 import kotlinx.html.*
 import kotlinx.html.dom.append
 import musicPlayer
+import org.khronos.webgl.get
 import org.w3c.dom.Audio
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
@@ -58,6 +60,7 @@ suspend fun mapView(mapName: String = "map", startTileX: Int = 0, startTileY: In
         }
     }
     Game.level?.music?.let { playMusic(it) }
+    Game.level?.backgroundColor?.let { document.body?.style?.backgroundColor = it }
 }
 
 fun CanvasRenderingContext2D.drawLayer(layer: TileLayer) {

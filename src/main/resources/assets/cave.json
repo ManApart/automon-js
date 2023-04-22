@@ -1,4 +1,12 @@
 { "compressionlevel":-1,
+ "editorsettings":
+    {
+     "export":
+        {
+         "format":"json",
+         "target":"cave.json"
+        }
+    },
  "height":10,
  "infinite":false,
  "layers":[
@@ -9,6 +17,11 @@
          "name":"Tile Layer 1",
          "opacity":1,
          "properties":[
+                {
+                 "name":"color",
+                 "type":"string",
+                 "value":"#a07f61"
+                }, 
                 {
                  "name":"music",
                  "type":"string",

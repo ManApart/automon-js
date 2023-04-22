@@ -10,6 +10,11 @@
          "opacity":1,
          "properties":[
                 {
+                 "name":"color",
+                 "type":"string",
+                 "value":"#22d859"
+                }, 
+                {
                  "name":"music",
                  "type":"string",
                  "value":"overworld"
