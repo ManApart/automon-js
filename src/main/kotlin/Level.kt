@@ -2,6 +2,7 @@ import tiled.*
 import ui.mapView
 
 class Level(val tileWidth: Int, val tiles: Map<Int, Map<Int, Tile>>, val objects: Map<Pair<Int, Int>, Object>) {
+    var playerPreviousTilePos = Pair(0, 0)
 
     fun getTile(posX: Double, posY: Double): TileInstance {
         val x = (posX / tileWidth).toInt()
@@ -16,16 +17,18 @@ class Level(val tileWidth: Int, val tiles: Map<Int, Map<Int, Tile>>, val objects
 
     private suspend fun processObjects() {
         val playerTilePos = Game.player.getTile().pos
-        objects.entries.filter { (coords, _) -> coords == playerTilePos }.forEach { (_, item) ->
-            when {
-                item.hasProps(listOf("level"), listOf("x", "y")) -> loadDoor(item)
-                else -> println("Unknown object $item")
+        if (playerTilePos != playerPreviousTilePos) {
+            playerPreviousTilePos = playerTilePos
+            objects.entries.filter { (coords, _) -> coords == playerTilePos }.forEach { (_, item) ->
+                when {
+                    item.hasProps(listOf("level"), listOf("x", "y")) -> loadDoor(item)
+                    else -> println("Unknown object $item")
+                }
             }
         }
     }
 
     private suspend fun loadDoor(door: Object) {
-        println("Process door $door")
         mapView(door.stringProp("level")!!, door.intProp("x")!!, door.intProp("y")!!)
     }
 }

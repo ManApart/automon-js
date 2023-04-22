@@ -20,6 +20,7 @@ suspend fun mapView(mapName: String = "map", startTileX: Int = 0, startTileY: In
     Game.level = map.toLevel()
     Game.player.x = startTileX * Game.level!!.tileWidth.toDouble()
     Game.player.y = startTileY * Game.level!!.tileWidth.toDouble()
+    Game.level?.playerPreviousTilePos = Pair(startTileX, startTileY)
     val section = el<HTMLElement>("root")
     clearSections()
     uiTicker = ::updateUI
@@ -54,10 +55,6 @@ suspend fun mapView(mapName: String = "map", startTileX: Int = 0, startTileY: In
 }
 
 fun CanvasRenderingContext2D.drawLayer(layer: TileLayer) {
-    val tiles = layer.tiles.flatMap { it.value.values }.count()
-    val row = layer.tiles.values.size
-    val col = layer.tiles.values.first().values.size
-    println("Drawing Layer ${layer.width}x${layer.height}, $tiles, ($row, $col)")
     layer.tiles.entries.forEach { (y, row) ->
         row.entries.forEach { (x, tile) ->
             putImageData(tile.image, x.toDouble() * tile.width, y.toDouble() * tile.height)
