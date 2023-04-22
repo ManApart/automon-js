@@ -42,12 +42,17 @@ class Controller {
             "ArrowDown" -> down = true
             "ArrowLeft" -> left = true
             "ArrowRight" -> right = true
-            else -> {
-                keyCaptured = false
-                println("Pressed ${event.key}")
-            }
+            else -> keyCaptured = false
         }
-        if (keyCaptured) event.preventDefault()
+
+        val matchingSubscriptions = subscriptions.values.flatMap { it.values }.filter { it.key == event.key }
+        keyCaptured = keyCaptured || matchingSubscriptions.isNotEmpty()
+
+        if (keyCaptured) {
+            event.preventDefault()
+        } else {
+            println("Pressed ${event.key}")
+        }
     }
 
     fun keyUp(event: Event) {
@@ -60,16 +65,17 @@ class Controller {
             "ArrowDown" -> down = false
             "ArrowLeft" -> left = false
             "ArrowRight" -> right = false
-            else -> {
-                keyCaptured = false
-                println("Released ${event.key}")
-            }
+            else -> keyCaptured = false
         }
 
         val matchingSubscriptions = subscriptions.values.flatMap { it.values }.filter { it.key == event.key }
         keyCaptured = keyCaptured || matchingSubscriptions.isNotEmpty()
         matchingSubscriptions.forEach { it.action() }
 
-        if (keyCaptured) event.preventDefault()
+        if (keyCaptured) {
+            event.preventDefault()
+        } else {
+            println("Released ${event.key}")
+        }
     }
 }

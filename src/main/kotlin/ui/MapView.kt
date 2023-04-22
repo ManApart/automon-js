@@ -24,8 +24,9 @@ private lateinit var spriteCtx: CanvasRenderingContext2D
 suspend fun mapView(mapName: String = "map", startTileX: Int = 0, startTileY: Int = 0) {
     val map = parseMap(mapName)
     Game.level = map.toLevel()
-    Game.player.x = startTileX * Game.level!!.tileWidth.toDouble()
-    Game.player.y = startTileY * Game.level!!.tileWidth.toDouble()
+    val tileWidth = Game.level!!.tileWidth.toDouble()
+    Game.player.x = startTileX * tileWidth + (tileWidth /2)
+    Game.player.y = startTileY * tileWidth + (tileWidth /2)
     Game.level?.playerPreviousTilePos = Pair(startTileX, startTileY)
     val section = el<HTMLElement>("root")
     clearSections()

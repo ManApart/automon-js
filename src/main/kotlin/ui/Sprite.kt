@@ -36,8 +36,10 @@ data class Sprite(val tileSheet: Image, val frameWidth: Double, val frameHeight:
     }
 
     fun draw(ctx: CanvasRenderingContext2D, x: Double, y: Double) {
+        val adjustedX = x - frameWidth/2
+        val adjustedY = y - frameHeight
         val (sx, sy) = animation.current(frameWidth, frameHeight)
-        ctx.drawImage(tileSheet, sx, sy, frameWidth, frameHeight, x, y, frameWidth, frameHeight)
+        ctx.drawImage(tileSheet, sx, sy, frameWidth, frameHeight, adjustedX, adjustedY, frameWidth, frameHeight)
     }
 }
 
