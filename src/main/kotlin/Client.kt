@@ -86,6 +86,7 @@ suspend fun loadImage(path: String): Image {
 
 fun clearSections() {
     el<HTMLElement>("root").innerHTML = ""
+    Game.controller.unSubscribe()
     uiTicker = {}
     musicPlayer?.pause()
 }

@@ -2,7 +2,7 @@ import core.Bot
 
 object Game {
     val controller = Controller()
-    val player = PlayerCharacter(Bot())
+    val player = MapPlayerCharacter(Bot())
     var level: Level? = null
     val ignoreMP = true
     var enableMusic = false

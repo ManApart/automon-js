@@ -21,6 +21,10 @@ class Controller {
         subscriptions.getOrPut(owner) { mutableMapOf() }[subscription.key] = subscription
     }
 
+    fun unSubscribe() {
+        subscriptions.clear()
+    }
+
     fun unSubscribe(owner: String, key: String) {
         subscriptions[owner]?.remove(key)
     }

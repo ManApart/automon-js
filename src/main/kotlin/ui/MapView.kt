@@ -62,6 +62,7 @@ suspend fun mapView(mapName: String = "map", startTileX: Int = 0, startTileY: In
             is ObjectLayer -> backgroundCtx.drawLayer(layer)
         }
     }
+    Game.player.initialize()
     Game.level?.music?.let { playMusic(it) }
     Game.level?.backgroundColor?.let { document.body?.style?.backgroundColor = it }
 }

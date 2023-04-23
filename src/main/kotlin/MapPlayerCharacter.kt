@@ -3,7 +3,7 @@ import core.Bot
 import tiled.TileInstance
 import ui.*
 
-class PlayerCharacter(private val bot: Bot) {
+class MapPlayerCharacter(private val bot: Bot) {
     lateinit var sprite: Sprite
     var x: Double = 0.0
     var y: Double = 0.0
@@ -20,7 +20,7 @@ class PlayerCharacter(private val bot: Bot) {
             playMusic()
         })
         Game.controller.subscribe("pc", ButtonSubscription("z") {
-            battleView(getTile()!!.getTerrain(), this, Bot())
+            battleView(getTile()!!.getTerrain(), bot, Bot())
         })
     }
 
