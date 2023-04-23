@@ -1,5 +1,7 @@
 package ui
 
+import ButtonSubscription
+import Game
 import clearSections
 import core.Bot
 import core.Terrain
@@ -28,6 +30,11 @@ suspend fun battleView(terrain: Terrain,  player: Bot, enemy: Bot) {
     }
     Game.level?.music?.let { playMusic("battle/$it") }
 //    Game.level?.backgroundColor?.let { document.body?.style?.backgroundColor = it }
+
+    Game.controller.subscribe("pc", ButtonSubscription("z") {
+        val start = Game.player.getTile()!!
+        mapView(Game.level!!.map, start.x, start.y)
+    })
 }
 
 private fun updateUI(timePassed: Double) {

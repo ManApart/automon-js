@@ -12,10 +12,7 @@ import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 import playMusic
-import tiled.ObjectLayer
-import tiled.Tile
-import tiled.TileLayer
-import tiled.parseMap
+import tiled.*
 import toLevel
 import uiTicker
 
@@ -25,6 +22,9 @@ private lateinit var spriteCtx: CanvasRenderingContext2D
 
 suspend fun mapView(mapName: String = "map", startTileX: Int = 0, startTileY: Int = 0) {
     val map = parseMap(mapName)
+    mapView(map, startTileX, startTileY)
+}
+suspend fun mapView(map: TiledMap, startTileX: Int = 0, startTileY: Int = 0) {
     Game.level = map.toLevel()
     val tileWidth = Game.level!!.tileWidth.toDouble()
     Game.player.x = startTileX * tileWidth + (tileWidth /2)
