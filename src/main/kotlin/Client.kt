@@ -1,3 +1,4 @@
+import Game.enableMusic
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.*
@@ -8,14 +9,12 @@ import org.w3c.xhr.JSON
 import org.w3c.xhr.XMLHttpRequest
 import org.w3c.xhr.XMLHttpRequestResponseType
 import ui.mapView
-import kotlin.coroutines.CoroutineContext
 import kotlin.js.Json
 import kotlin.js.Promise
 
 const val tickRate = 16
 var uiTicker: (Double) -> Unit = {}
 private var lastFrame = 0.0
-var enableMusic = false
 var musicPlayer: Audio? = null
 
 suspend fun main() {

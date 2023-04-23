@@ -1,10 +1,12 @@
+import Game.enableMusic
+import core.Bot
 import tiled.TileInstance
 import ui.Sprite
 import ui.anim
 import ui.sprite
 import ui.x
 
-class PlayerCharacter {
+class PlayerCharacter(private val bot: Bot) {
     lateinit var sprite: Sprite
     var x: Double = 0.0
     var y: Double = 0.0

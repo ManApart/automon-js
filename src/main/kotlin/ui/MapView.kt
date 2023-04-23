@@ -1,19 +1,21 @@
 package ui
 
+import Game
 import clearSections
 import el
-import enableMusic
 import kotlinx.browser.document
-import kotlinx.html.*
+import kotlinx.html.canvas
+import kotlinx.html.div
 import kotlinx.html.dom.append
-import musicPlayer
-import org.khronos.webgl.get
-import org.w3c.dom.Audio
+import kotlinx.html.id
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLElement
 import playMusic
-import tiled.*
+import tiled.ObjectLayer
+import tiled.Tile
+import tiled.TileLayer
+import tiled.parseMap
 import toLevel
 import uiTicker
 

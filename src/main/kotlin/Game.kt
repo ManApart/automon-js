@@ -1,7 +1,11 @@
+import core.Bot
+
 object Game {
     val controller = Controller()
-    val player = PlayerCharacter()
+    val player = PlayerCharacter(Bot())
     var level: Level? = null
+    val ignoreMP = true
+    var enableMusic = false
 
     suspend fun initialize() {
         player.initialize()
