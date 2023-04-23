@@ -1,8 +1,11 @@
 import kotlinx.browser.document
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.KeyboardEvent
 
-class ButtonSubscription(val key: String, val action: () -> Unit)
+class ButtonSubscription(val key: String, val action: suspend () -> Unit)
 
 class Controller {
     private var interactedWith = false
@@ -55,27 +58,28 @@ class Controller {
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun keyUp(event: Event) {
         if (event.defaultPrevented) return
         if (event !is KeyboardEvent) return
+        GlobalScope.launch {
+            var keyCaptured = true
+            when (event.key) {
+                "ArrowUp" -> up = false
+                "ArrowDown" -> down = false
+                "ArrowLeft" -> left = false
+                "ArrowRight" -> right = false
+                else -> keyCaptured = false
+            }
 
-        var keyCaptured = true
-        when (event.key) {
-            "ArrowUp" -> up = false
-            "ArrowDown" -> down = false
-            "ArrowLeft" -> left = false
-            "ArrowRight" -> right = false
-            else -> keyCaptured = false
-        }
-
-        val matchingSubscriptions = subscriptions.values.flatMap { it.values }.filter { it.key == event.key }
-        keyCaptured = keyCaptured || matchingSubscriptions.isNotEmpty()
-        matchingSubscriptions.forEach { it.action() }
-
-        if (keyCaptured) {
-            event.preventDefault()
-        } else {
-            println("Released ${event.key}")
+            val matchingSubscriptions = subscriptions.values.flatMap { it.values }.filter { it.key == event.key }
+            keyCaptured = keyCaptured || matchingSubscriptions.isNotEmpty()
+            matchingSubscriptions.forEach { it.action() }
+            if (keyCaptured) {
+                event.preventDefault()
+            } else {
+                println("Released ${event.key}")
+            }
         }
     }
 }

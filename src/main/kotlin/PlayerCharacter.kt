@@ -1,10 +1,7 @@
 import Game.enableMusic
 import core.Bot
 import tiled.TileInstance
-import ui.Sprite
-import ui.anim
-import ui.sprite
-import ui.x
+import ui.*
 
 class PlayerCharacter(private val bot: Bot) {
     lateinit var sprite: Sprite
@@ -21,6 +18,9 @@ class PlayerCharacter(private val bot: Bot) {
             enableMusic = !enableMusic
             println("Set music enabled: $enableMusic")
             playMusic()
+        })
+        Game.controller.subscribe("pc", ButtonSubscription("z") {
+            battleView(getTile()!!.getTerrain(), this, Bot())
         })
     }
 
