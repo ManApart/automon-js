@@ -1,5 +1,7 @@
 package tiled
 
+import core.Terrain
+import data.terrains
 import org.w3c.dom.ImageData
 
 interface TiledLayer
@@ -12,6 +14,10 @@ data class TileLayer(val name: String, val x: Int, val y: Int, val width: Int, v
 
 data class TileInstance(val x: Int, val y: Int, val tile: Tile) {
     val pos = Pair(x, y)
+
+    fun getTerrain(): Terrain {
+        return tile.properties.strings["terrain"]?.let { terrains[it] } ?: terrains.values.first()
+    }
 }
 
 data class Tile(val id: Int, val image: ImageData, val width: Int, val height: Int, val properties: Properties = Properties()) {

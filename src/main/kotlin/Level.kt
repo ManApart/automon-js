@@ -4,11 +4,12 @@ import ui.mapView
 class Level(val tileWidth: Int, val tiles: Map<Int, Map<Int, Tile>>, val objects: Map<Pair<Int, Int>, Object>, val music: String?, val backgroundColor: String?) {
     var playerPreviousTilePos = Pair(0, 0)
 
-    fun getTile(posX: Double, posY: Double): TileInstance {
+    fun getTile(posX: Double, posY: Double): TileInstance? {
         val x = (posX / tileWidth).toInt()
         val y = (posY / tileWidth).toInt()
-        val tile = tiles[y]!![x]!!
-        return TileInstance(x, y, tile)
+        val tile = tiles[y]?.get(x)
+//        if (tile == null) println("$x,$y is null!")
+        return tile?.let { TileInstance(x, y, it) }
     }
 
     suspend fun tick(timePassed: Double) {
@@ -16,8 +17,8 @@ class Level(val tileWidth: Int, val tiles: Map<Int, Map<Int, Tile>>, val objects
     }
 
     private suspend fun processObjects() {
-        val playerTilePos = Game.player.getTile().pos
-        if (playerTilePos != playerPreviousTilePos) {
+        val playerTilePos = Game.player.getTile()?.pos
+        if (playerTilePos != null && playerTilePos != playerPreviousTilePos) {
             playerPreviousTilePos = playerTilePos
             objects.entries.filter { (coords, _) -> coords == playerTilePos }.forEach { (_, item) ->
                 when {
@@ -35,7 +36,7 @@ class Level(val tileWidth: Int, val tiles: Map<Int, Map<Int, Tile>>, val objects
 
 
 fun TiledMap.toLevel(): Level {
-    val tileLayer =(layers.first { it is TileLayer } as TileLayer)
+    val tileLayer = (layers.first { it is TileLayer } as TileLayer)
     val tiles = tileLayer.tiles
     val music = tileLayer.properties.strings["music"]
     val backgroundColor = tileLayer.properties.strings["color"]
