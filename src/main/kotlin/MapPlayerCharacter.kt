@@ -3,7 +3,7 @@ import core.Bot
 import tiled.TileInstance
 import ui.*
 
-class MapPlayerCharacter(private val bot: Bot) {
+class MapPlayerCharacter(val bot: Bot) {
     lateinit var sprite: Sprite
     var x: Double = 0.0
     var y: Double = 0.0

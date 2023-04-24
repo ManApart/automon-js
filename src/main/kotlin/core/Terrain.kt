@@ -4,6 +4,7 @@ package core
 class Terrain(
     val name: String,
     val battleName: String,
+    val color: String,
     val description: String,
     val flat: Int = 0,
     val bumpy: Int = 0,

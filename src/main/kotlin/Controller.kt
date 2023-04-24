@@ -87,3 +87,22 @@ class Controller {
         }
     }
 }
+
+class SubscriptionBuilder(private val owner: String) {
+    private var subs = mutableListOf<ButtonSubscription>()
+
+
+    infix fun String.to( handler: suspend () -> Unit){
+        subs.add(ButtonSubscription(this, handler))
+    }
+
+    fun applyTo(controller: Controller) {
+        subs.forEach { sub ->
+            controller.subscribe(owner, sub)
+        }
+    }
+}
+
+fun sub(owner: String, customizer: SubscriptionBuilder.() -> Unit) {
+    SubscriptionBuilder(owner).apply(customizer).applyTo(Game.controller)
+}

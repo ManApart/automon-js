@@ -14,3 +14,16 @@ body {
     left: 0;
     height: 800px;
 }
+
+#battle-background {
+    height: 99vh;
+}
+
+#battle-buttons {
+    position: absolute;
+    top: 0;
+}
+
+.selected-button {
+    background-color: white;
+}

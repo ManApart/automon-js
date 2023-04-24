@@ -1,4 +1,7 @@
 import Game.enableMusic
+import Game.player
+import core.Bot
+import data.terrains
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.*
@@ -8,6 +11,7 @@ import org.w3c.dom.Image
 import org.w3c.xhr.JSON
 import org.w3c.xhr.XMLHttpRequest
 import org.w3c.xhr.XMLHttpRequestResponseType
+import ui.battleView
 import ui.mapView
 import kotlin.js.Json
 import kotlin.js.Promise
@@ -21,7 +25,8 @@ suspend fun main() {
     Game.initialize()
     window.setInterval(::tick, tickRate)
     window.requestAnimationFrame(::uiTick)
-    mapView()
+//    mapView()
+    battleView(terrains.values.first(), player.bot, Bot())
 }
 
 @OptIn(DelicateCoroutinesApi::class)

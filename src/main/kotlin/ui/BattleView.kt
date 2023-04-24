@@ -6,16 +6,23 @@ import clearSections
 import core.Bot
 import core.Terrain
 import el
-import kotlinx.html.div
+import kotlinx.browser.document
+import kotlinx.html.*
 import kotlinx.html.dom.append
-import kotlinx.html.id
-import kotlinx.html.img
+import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
 import playMusic
+import sub
 import uiTicker
 
-suspend fun battleView(terrain: Terrain,  player: Bot, enemy: Bot) {
-    println("Do battle!")
+private lateinit var upButton: HTMLDivElement
+private lateinit var downButton: HTMLDivElement
+private lateinit var leftButton: HTMLDivElement
+private lateinit var rightButton: HTMLDivElement
+private lateinit var buttons: List<HTMLDivElement>
+private lateinit var selectedButton: HTMLDivElement
+
+suspend fun battleView(terrain: Terrain, player: Bot, enemy: Bot) {
     val section = el<HTMLElement>("root")
     clearSections()
     uiTicker = ::updateUI
@@ -26,15 +33,71 @@ suspend fun battleView(terrain: Terrain,  player: Bot, enemy: Bot) {
                 src = "assets/battleBackgrounds/${terrain.battleName}.png"
                 id = "battle-background"
             }
+            div {
+                id = "battle-buttons"
+                div("battle-button") {
+                    id = "up-button"
+                    +"Inspect"
+                }
+                div("battle-button") {
+                    id = "down-button"
+                    +"-"
+                }
+                div("battle-button") {
+                    id = "right-button"
+                    +"Action"
+                }
+                div("battle-button") {
+                    id = "left-button"
+                    +"Flee"
+                }
+            }
         }
     }
+    upButton = el("up-button")
+    downButton = el("down-button")
+    leftButton = el("left-button")
+    rightButton = el("right-button")
+    buttons = listOf(upButton, downButton, leftButton, rightButton)
     Game.level?.music?.let { playMusic("battle/$it") }
-//    Game.level?.backgroundColor?.let { document.body?.style?.backgroundColor = it }
+    document.body?.style?.backgroundColor = "#" + terrain.color
 
-    Game.controller.subscribe("pc", ButtonSubscription("z") {
-        val start = Game.player.getTile()!!
-        mapView(Game.level!!.map, start.x, start.y)
-    })
+    sub("pc") {
+        "z" to {
+            if (Game.level != null) {
+                val start = Game.player.getTile()
+                mapView(Game.level!!.map, start?.x ?: 0, start?.y ?: 0)
+            } else {
+                mapView()
+            }
+            //TODO - go back instead
+        }
+        "ArrowUp" to {
+            selectButton(upButton)
+        }
+        "ArrowDown" to {
+            selectButton(downButton)
+        }
+        "ArrowLeft" to {
+            selectButton(leftButton)
+        }
+        "ArrowRight" to {
+            selectButton(rightButton)
+        }
+        " " to {
+            useSelected()
+        }
+    }
+}
+
+private fun selectButton(button: HTMLDivElement) {
+    println("Selecting ${button.id}")
+    buttons.forEach { btn -> btn.classList.remove("selected-button") }
+    button.classList.add("selected-button")
+}
+
+private fun useSelected() {
+
 }
 
 private fun updateUI(timePassed: Double) {
