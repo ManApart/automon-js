@@ -27,6 +27,7 @@ private var previousMenu: (suspend () -> Unit)? = null
 private val actions = mutableMapOf<HTMLDivElement, suspend () -> Unit>()
 
 suspend fun battleView(terrain: Terrain, player: Bot, enemy: Bot) {
+    Game.enemyBot = enemy
     val section = el<HTMLElement>("root")
     clearSections()
     uiTicker = ::updateUI
@@ -42,15 +43,19 @@ suspend fun battleView(terrain: Terrain, player: Bot, enemy: Bot) {
                 div("battle-button") {
                     id = "up-button"
                 }
+                div {
+                    id = "battle-arms-section"
+                    div("battle-button") {
+                        id = "left-button"
+                    }
+                    div("battle-button") {
+                        id = "right-button"
+                    }
+                }
                 div("battle-button") {
                     id = "down-button"
                 }
-                div("battle-button") {
-                    id = "right-button"
-                }
-                div("battle-button") {
-                    id = "left-button"
-                }
+
             }
         }
     }
@@ -103,19 +108,43 @@ private fun updateUI(timePassed: Double) {
 
 }
 
-private fun mainOptions() {
+private fun clearActions() {
     actions.clear()
+    buttons.forEach { it.textContent = "-" }
+}
+
+private suspend fun mainOptions() {
+    clearActions()
     upButton.textContent = "Inspect"
-    downButton.textContent = "-"
+    actions[upButton] = ::inspect
     leftButton.textContent = "Flee"
     actions[leftButton] = ::flee
     rightButton.textContent = "Action"
 }
 
 private suspend fun flee() {
-    println("Flee")
     if (Game.level != null) {
         val start = Game.player.getTile()
         mapView(Game.level!!.map, start?.x ?: 0, start?.y ?: 0)
     } else mapView()
+}
+
+private suspend fun inspect() {
+    clearActions()
+    previousMenu = ::mainOptions
+    leftButton.textContent = "Me"
+    actions[leftButton] = { inspectBot(Game.player.bot) }
+    rightButton.textContent = "Them"
+    actions[rightButton] = { inspectBot(Game.enemyBot!!) }
+}
+
+private fun inspectBot(bot: Bot) {
+    clearActions()
+    previousMenu = ::inspect
+    with(bot) {
+        upButton.textContent = "Head: ${head.health}/${head.totalHealth}"
+        downButton.textContent = "Core: ${core.health}/${core.totalHealth}"
+        leftButton.textContent = "Left Arm: ${armLeft.health}/${armLeft.totalHealth}"
+        rightButton.textContent = "Right Arm: ${armRight.health}/${armRight.totalHealth}"
+    }
 }

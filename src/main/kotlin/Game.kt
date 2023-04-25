@@ -4,6 +4,7 @@ object Game {
     val controller = Controller()
     val player = MapPlayerCharacter(Bot())
     var level: Level? = null
+    var enemyBot: Bot? = null
     val ignoreMP = true
     var enableMusic = false
 

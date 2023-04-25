@@ -22,6 +22,15 @@ body {
 #battle-buttons {
     position: absolute;
     top: 0;
+    text-align: center;
+}
+
+.battle-button {
+    padding: 10px;
+}
+
+#battle-arms-section .battle-button {
+    display: inline-block;
 }
 
 .selected-button {
