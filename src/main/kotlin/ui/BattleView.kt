@@ -1,14 +1,15 @@
 package ui
 
-import ButtonSubscription
 import Game
 import clearSections
 import core.Bot
 import core.Terrain
 import el
 import kotlinx.browser.document
-import kotlinx.html.*
+import kotlinx.html.div
 import kotlinx.html.dom.append
+import kotlinx.html.id
+import kotlinx.html.img
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
 import playMusic
@@ -20,7 +21,10 @@ private lateinit var downButton: HTMLDivElement
 private lateinit var leftButton: HTMLDivElement
 private lateinit var rightButton: HTMLDivElement
 private lateinit var buttons: List<HTMLDivElement>
-private lateinit var selectedButton: HTMLDivElement
+private var selectedButton: HTMLDivElement? = null
+private var previousMenu: (suspend () -> Unit)? = null
+
+private val actions = mutableMapOf<HTMLDivElement, suspend () -> Unit>()
 
 suspend fun battleView(terrain: Terrain, player: Bot, enemy: Bot) {
     val section = el<HTMLElement>("root")
@@ -37,19 +41,15 @@ suspend fun battleView(terrain: Terrain, player: Bot, enemy: Bot) {
                 id = "battle-buttons"
                 div("battle-button") {
                     id = "up-button"
-                    +"Inspect"
                 }
                 div("battle-button") {
                     id = "down-button"
-                    +"-"
                 }
                 div("battle-button") {
                     id = "right-button"
-                    +"Action"
                 }
                 div("battle-button") {
                     id = "left-button"
-                    +"Flee"
                 }
             }
         }
@@ -64,13 +64,7 @@ suspend fun battleView(terrain: Terrain, player: Bot, enemy: Bot) {
 
     sub("pc") {
         "z" to {
-            if (Game.level != null) {
-                val start = Game.player.getTile()
-                mapView(Game.level!!.map, start?.x ?: 0, start?.y ?: 0)
-            } else {
-                mapView()
-            }
-            //TODO - go back instead
+            previousMenu?.let { it() }
         }
         "ArrowUp" to {
             selectButton(upButton)
@@ -88,18 +82,40 @@ suspend fun battleView(terrain: Terrain, player: Bot, enemy: Bot) {
             useSelected()
         }
     }
+    mainOptions()
 }
 
 private fun selectButton(button: HTMLDivElement) {
-    println("Selecting ${button.id}")
+    selectedButton = button
     buttons.forEach { btn -> btn.classList.remove("selected-button") }
     button.classList.add("selected-button")
 }
 
-private fun useSelected() {
-
+private suspend fun useSelected() {
+    selectedButton?.let {
+        actions[it]?.invoke()?.also {
+            buttons.forEach { btn -> btn.classList.remove("selected-button") }
+        }
+    }
 }
 
 private fun updateUI(timePassed: Double) {
 
+}
+
+private fun mainOptions() {
+    actions.clear()
+    upButton.textContent = "Inspect"
+    downButton.textContent = "-"
+    leftButton.textContent = "Flee"
+    actions[leftButton] = ::flee
+    rightButton.textContent = "Action"
+}
+
+private suspend fun flee() {
+    println("Flee")
+    if (Game.level != null) {
+        val start = Game.player.getTile()
+        mapView(Game.level!!.map, start?.x ?: 0, start?.y ?: 0)
+    } else mapView()
 }
