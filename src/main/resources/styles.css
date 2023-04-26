@@ -21,18 +21,29 @@ body {
 
 #battle-buttons {
     position: absolute;
-    top: 0;
+    top: 780px;
     text-align: center;
+    width: 100%;
 }
 
 .battle-button {
     padding: 10px;
-}
-
-#battle-arms-section .battle-button {
+    background-color: gray;
     display: inline-block;
+    margin: 5px;
+    border-radius: 5px;
+    border: 2px solid transparent;
 }
 
 .selected-button {
-    background-color: white;
+    border: 2px solid black;
+}
+
+.battle-bot-image {
+    width: 16px;
+    height: 20px;
+    object-fit: none;
+    scale: 6;
+    position: absolute;
+    top: 20%
 }

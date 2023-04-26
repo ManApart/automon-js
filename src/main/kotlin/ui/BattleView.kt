@@ -10,6 +10,7 @@ import kotlinx.html.div
 import kotlinx.html.dom.append
 import kotlinx.html.id
 import kotlinx.html.img
+import kotlinx.html.style
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
 import playMusic
@@ -37,6 +38,16 @@ suspend fun battleView(terrain: Terrain, player: Bot, enemy: Bot) {
             img("battle background") {
                 src = "assets/battleBackgrounds/${terrain.battleName}.png"
                 id = "battle-background"
+            }
+            img(classes = "battle-bot-image"){
+                id = "player-bot"
+                src = "assets/character.png"
+                style = "object-position: 0px -60px; left: 20%"
+            }
+            img(classes = "battle-bot-image"){
+                id = "enemy-bot"
+                src = "assets/character.png"
+                style = "object-position: 0px -40px; left: 70%;"
             }
             div {
                 id = "battle-buttons"
