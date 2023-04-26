@@ -13,6 +13,7 @@ import kotlinx.html.img
 import kotlinx.html.style
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
+import org.w3c.dom.HTMLImageElement
 import playMusic
 import sub
 import uiTicker
@@ -24,6 +25,7 @@ private lateinit var rightButton: HTMLDivElement
 private lateinit var buttons: List<HTMLDivElement>
 private var selectedButton: HTMLDivElement? = null
 private var previousMenu: (suspend () -> Unit)? = null
+private var cleanup: (suspend () -> Unit)? = null
 
 private val actions = mutableMapOf<HTMLDivElement, suspend () -> Unit>()
 
@@ -35,16 +37,19 @@ suspend fun battleView(terrain: Terrain, player: Bot, enemy: Bot) {
     section.append {
         div {
             id = "battle-wrapper"
+            div {
+                id = "battle-wrapper-children"
+            }
             img("battle background") {
                 src = "assets/battleBackgrounds/${terrain.battleName}.png"
                 id = "battle-background"
             }
-            img(classes = "battle-bot-image"){
+            img(classes = "battle-bot-image") {
                 id = "player-bot"
                 src = "assets/character.png"
                 style = "object-position: 0px -60px; left: 20%"
             }
-            img(classes = "battle-bot-image"){
+            img(classes = "battle-bot-image") {
                 id = "enemy-bot"
                 src = "assets/character.png"
                 style = "object-position: 0px -40px; left: 70%;"
@@ -119,9 +124,10 @@ private fun updateUI(timePassed: Double) {
 
 }
 
-private fun clearActions() {
+private suspend fun clearActions() {
     actions.clear()
     buttons.forEach { it.textContent = "-" }
+    cleanup?.let { it() }
 }
 
 private suspend fun mainOptions() {
@@ -144,18 +150,40 @@ private suspend fun inspect() {
     clearActions()
     previousMenu = ::mainOptions
     leftButton.textContent = "Me"
-    actions[leftButton] = { inspectBot(Game.player.bot) }
+    actions[leftButton] = { inspectBot(true) }
     rightButton.textContent = "Them"
-    actions[rightButton] = { inspectBot(Game.enemyBot!!) }
+    actions[rightButton] = { inspectBot(false) }
 }
 
-private fun inspectBot(bot: Bot) {
+private suspend fun inspectBot(isPlayer: Boolean) {
     clearActions()
+    val bot = if (isPlayer) Game.player.bot else Game.enemyBot!!
+    val otherDiv: HTMLImageElement = if (isPlayer) el("enemy-bot") else el("player-bot")
+    otherDiv.classList.add("hidden")
     previousMenu = ::inspect
     with(bot) {
         upButton.textContent = "Head: ${head.health}/${head.totalHealth}"
         downButton.textContent = "Core: ${core.health}/${core.totalHealth}"
         leftButton.textContent = "Left Arm: ${armLeft.health}/${armLeft.totalHealth}"
         rightButton.textContent = "Right Arm: ${armRight.health}/${armRight.totalHealth}"
+    }
+
+    val wrapper: HTMLDivElement = el("battle-wrapper-children")
+    wrapper.append {
+        with(bot) {
+            div("battle-inspect-info") {
+                div("battle-button") {
+                    +"AP: ${head.ap}/${head.totalAP}"
+                }
+                div("battle-button") {
+                    +"MP: ${mp}/${mp}"
+                }
+            }
+        }
+    }
+
+    cleanup = {
+        otherDiv.classList.remove("hidden")
+        wrapper.innerHTML = ""
     }
 }
