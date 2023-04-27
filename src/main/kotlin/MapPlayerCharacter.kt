@@ -20,7 +20,7 @@ class MapPlayerCharacter(val bot: Bot) {
             playMusic()
         })
         Game.controller.subscribe("pc", ButtonSubscription("z") {
-            battleView(getTile()!!.getTerrain(), bot, Bot())
+            battleView(getTile()!!.getTerrain(), Bot())
         })
     }
 

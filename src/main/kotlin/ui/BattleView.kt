@@ -3,7 +3,9 @@ package ui
 import Game
 import clearSections
 import core.Bot
+import core.Part
 import core.Terrain
+import data.NOTHING
 import el
 import kotlinx.browser.document
 import kotlinx.html.div
@@ -29,7 +31,7 @@ private var cleanup: (suspend () -> Unit)? = null
 
 private val actions = mutableMapOf<HTMLDivElement, suspend () -> Unit>()
 
-suspend fun battleView(terrain: Terrain, player: Bot, enemy: Bot) {
+suspend fun battleView(terrain: Terrain, enemy: Bot) {
     Game.enemyBot = enemy
     val section = el<HTMLElement>("root")
     clearSections()
@@ -132,11 +134,9 @@ private suspend fun clearActions() {
 
 private suspend fun mainOptions() {
     clearActions()
-    upButton.textContent = "Inspect"
-    actions[upButton] = ::inspect
-    leftButton.textContent = "Flee"
-    actions[leftButton] = ::flee
-    rightButton.textContent = "Action"
+    createButton(upButton, "Inspect", ::inspect)
+    createButton(leftButton, "Flee", ::flee)
+    createButton(rightButton, "Action", ::action)
 }
 
 private suspend fun flee() {
@@ -149,10 +149,8 @@ private suspend fun flee() {
 private suspend fun inspect() {
     clearActions()
     previousMenu = ::mainOptions
-    leftButton.textContent = "Me"
-    actions[leftButton] = { inspectBot(true) }
-    rightButton.textContent = "Them"
-    actions[rightButton] = { inspectBot(false) }
+    createButton(leftButton, "Me") { inspectBot(true) }
+    createButton(rightButton, "Them") { inspectBot(false) }
 }
 
 private suspend fun inspectBot(isPlayer: Boolean) {
@@ -186,4 +184,43 @@ private suspend fun inspectBot(isPlayer: Boolean) {
         otherDiv.classList.remove("hidden")
         wrapper.innerHTML = ""
     }
+}
+
+private suspend fun action() {
+    clearActions()
+    previousMenu = ::mainOptions
+    with(Game.player.bot) {
+        createActionButton(head, upButton)
+        createActionButton(armRight, rightButton)
+        createActionButton(armLeft, leftButton)
+        createActionButton(core, downButton)
+    }
+}
+
+private fun createActionButton(part: Part, button: HTMLDivElement) {
+    if (part.action != NOTHING) createButton(button, part.action.name) { aim(part) }
+}
+
+
+private suspend fun aim(part: Part) {
+    clearActions()
+    previousMenu = ::action
+
+    with(Game.enemyBot!!) {
+        createButton(upButton, head.name) { useAction(part, head) }
+        createButton(leftButton, armLeft.name) { useAction(part, armLeft) }
+        createButton(downButton, armRight.name) { useAction(part, armRight) }
+        createButton(rightButton, core.name) { useAction(part, core) }
+    }
+}
+
+private suspend fun useAction(part: Part, target: Part){
+    //TODO - use / prevent AP as needed
+    part.action.use(Game.player.bot, target)
+    mainOptions()
+}
+
+private fun createButton(button: HTMLDivElement, name: String, action: suspend () -> Unit) {
+    button.textContent = name
+    actions[button] = action
 }

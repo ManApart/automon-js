@@ -35,7 +35,7 @@ class Bot(
             return ActionResult.MISS
         }
 
-        action.use(this, target, battle)
+        action.use(this, target)
 
         return action.type
     }
